@@ -1,10 +1,14 @@
 package code_formes;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -22,15 +26,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import modele.DataFactory;
+import modele.Forme;
+import modele.FormesFactory;
 
 public class VueForme {
 
-	private boolean start = true;
+	private boolean firstTime = true;
 
 	private ActionButton ecouteurButton = new ActionButton();
 	private ActionForme ecouteurForme = new ActionForme();
+	private ActionEffet ecouteurEffet = new ActionEffet();
 
 	private Button buttonGenerer;
 	private Button buttonReinitialiser;
@@ -38,6 +47,7 @@ public class VueForme {
 	private Scene scene;
 	private BorderPane root;
 	private HBox hbBottom;
+	private StackPane pn;
 	private ListView<TextFlow> listFormes;
 	private ColorPicker theChosenOne;
 	private CheckBox chkBxEffet;
@@ -48,64 +58,20 @@ public class VueForme {
 	private TextField txtFldCoteC;
 	private Slider io;
 
+	private Label lbX;
+	private Label lbY;
 	private Label lbA;
 	private Label lbB;
+
+	private String name;
 
 	public VueForme() {
 		construireInterface();
 
 	}
 
-	public Button getButtonGenerer() {
-		return buttonGenerer;
-	}
-
-	public void setButtonGenerer(Button buttonGenerer) {
-		this.buttonGenerer = buttonGenerer;
-	}
-
-	public Button getButtonReinitialiser() {
-		return buttonReinitialiser;
-	}
-
-	public void setButtonReinitialiser(Button buttonReinitialiser) {
-		this.buttonReinitialiser = buttonReinitialiser;
-	}
-
-	public Button getButtonQuitter() {
-		return buttonQuitter;
-	}
-
-	public void setButtonQuitter(Button buttonQuitter) {
-		this.buttonQuitter = buttonQuitter;
-	}
-
-	public Scene getScene() {
-		return scene;
-	}
-
-	public void setScene(Scene scene) {
-		this.scene = scene;
-	}
-
-	public BorderPane getRoot() {
-		return root;
-	}
-
-	public void setRoot(BorderPane root) {
-		this.root = root;
-	}
-
-	public HBox getHbBottom() {
-		return hbBottom;
-	}
-
-	public void setHbBottom(HBox hbBottom) {
-		this.hbBottom = hbBottom;
-	}
-
 	public StackPane addCenter() {
-		StackPane pn = new StackPane();
+		pn = new StackPane();
 
 		pn.setPrefSize(500, 500);
 		pn.getStyleClass().add("pn");
@@ -127,6 +93,8 @@ public class VueForme {
 		buttonQuitter = new Button("Quitter");
 
 		buttonQuitter.setOnMouseClicked(ecouteurButton);
+		buttonReinitialiser.setOnMouseClicked(ecouteurButton);
+		buttonGenerer.setOnMouseClicked(ecouteurButton);
 
 		hbBottom = new HBox();
 		hbBottom.setPadding(new Insets(10, 10, 10, 10));
@@ -208,7 +176,7 @@ public class VueForme {
 		Label lb = new Label("Effet");
 
 		chkBxEffet = new CheckBox();
-
+		chkBxEffet.setOnAction(ecouteurEffet);
 		vb.getChildren().addAll(lb, chkBxEffet);
 
 		return vb;
@@ -217,12 +185,12 @@ public class VueForme {
 	private VBox addVBoxPositionX() {
 		VBox vb = new VBox();
 
-		Label lb = new Label("PositionX");
+		lbX = new Label("PositionX");
 
 		txtFldPositionX = new TextField();
 		txtFldPositionX.setPrefWidth(10);
 
-		vb.getChildren().addAll(lb, txtFldPositionX);
+		vb.getChildren().addAll(lbX, txtFldPositionX);
 
 		return vb;
 
@@ -231,12 +199,12 @@ public class VueForme {
 	private VBox addVBoxPositionY() {
 		VBox vb = new VBox();
 
-		Label lb = new Label("PositionY");
+		lbY = new Label("PositionY");
 
 		txtFldPositionY = new TextField();
 		txtFldPositionY.setPrefWidth(10);
 
-		vb.getChildren().addAll(lb, txtFldPositionY);
+		vb.getChildren().addAll(lbY, txtFldPositionY);
 
 		return vb;
 
@@ -331,16 +299,68 @@ public class VueForme {
 			// FIXME Auto-generated method stub
 			if (event.getSource() == buttonQuitter) {
 				Platform.exit();
+			} else if (event.getSource() == buttonReinitialiser) {
+				getPn().getChildren().removeAll(getPn().getChildren());
+			} else if (event.getSource() == buttonGenerer) {
+				for (Node node : getPn().getChildren()) {
+					node.opacityProperty().bind(Bindings.divide(io.valueProperty(), io.maxProperty()));
+				}
+				DataFactory dF;
+				if (!txtFldCoteC.isDisabled()) {
+					dF = new DataFactory(name, getTheChosenOne().getValue(),
+							Double.parseDouble(txtFldPositionX.getText()),
+							Double.parseDouble(txtFldPositionY.getText()), Double.parseDouble(txtFldCoteA.getText()),
+							Double.parseDouble(txtFldCoteB.getText()), Double.parseDouble(txtFldCoteC.getText()));
+				} else {
+					dF = new DataFactory(name, getTheChosenOne().getValue(),
+							Double.parseDouble(txtFldPositionX.getText()),
+							Double.parseDouble(txtFldPositionY.getText()), Double.parseDouble(txtFldCoteA.getText()),
+							Double.parseDouble(txtFldCoteB.getText()), 0);
+				}
+
+				FormesFactory fF = new FormesFactory(dF);
+				Forme f = fF.getInstance(dF);
+
 			}
 		}
+	}
+
+	public class ActionEffet implements EventHandler<ActionEvent> {
+
+		@Override
+		public void handle(ActionEvent event) {
+			if (event.getSource() == chkBxEffet) {
+				boolean isEffet = chkBxEffet.isSelected();
+				setEffet(isEffet);
+			}
+
+		}
+
+		private void setEffet(boolean isEffet) {
+
+			for (Node node : getPn().getChildren()) {
+				if (isEffet) {
+					((Shape) node).setStroke(Paint.valueOf("#7F00FF"));
+					((Shape) node).setStrokeWidth(10);
+				} else {
+					((Shape) node).setStrokeWidth(0);
+				}
+			}
+		}
+
+	}
+
+	public class ActionOpacite {
+
 	}
 
 	public class ActionForme implements EventHandler<MouseEvent> {
 
 		@Override
 		public void handle(MouseEvent event) {
-			if (start) {
-				start = false;
+			if (firstTime) {
+				firstTime = false;
+				buttonGenerer.setDisable(false);
 				theChosenOne.setDisable(false);
 				txtFldPositionX.setDisable(false);
 				txtFldPositionY.setDisable(false);
@@ -349,32 +369,93 @@ public class VueForme {
 			}
 
 			if (event.getSource() == listFormes.getItems().get(0)) {
+				lbX.setText("PositionX");
+				lbY.setText("PositionY");
 				lbA.setText("Largeur");
 				lbB.setText("Hauteur");
 				txtFldCoteA.setDisable(false);
 				txtFldCoteB.setDisable(false);
 				txtFldCoteC.setDisable(true);
-				System.out.println("Ovale");
+				name = "Ovale";
 
 			} else if (event.getSource() == listFormes.getItems().get(1)) {
+				lbX.setText("PositionX");
+				lbY.setText("PositionY");
 				lbA.setText("Largeur");
 				lbB.setText("Hauteur");
 				txtFldCoteA.setDisable(false);
 				txtFldCoteB.setDisable(false);
 				txtFldCoteC.setDisable(true);
-				System.out.println("Rectangle");
+				name = "Rectangle";
 			} else if (event.getSource() == listFormes.getItems().get(2)) {
+				lbX.setText("PositionX");
+				lbY.setText("PositionY");
 				lbA.setText("Côté A");
 				lbB.setText("Côté B");
 				txtFldCoteA.setDisable(false);
 				txtFldCoteB.setDisable(false);
 				txtFldCoteC.setDisable(false);
-				System.out.println("Triangle");
+				name = "Triangle";
 			} else if (event.getSource() == listFormes.getItems().get(3)) {
+				lbX.setText("DébutX");
+				lbY.setText("DébutY");
+				lbA.setText("Fin X");
+				lbB.setText("Fin Y");
+				txtFldCoteA.setDisable(false);
+				txtFldCoteB.setDisable(false);
+				txtFldCoteC.setDisable(true);
 				System.out.println("Ligne");
 			}
 
 		}
+	}
+
+	public Button getButtonGenerer() {
+		return buttonGenerer;
+	}
+
+	public void setButtonGenerer(Button buttonGenerer) {
+		this.buttonGenerer = buttonGenerer;
+	}
+
+	public Button getButtonReinitialiser() {
+		return buttonReinitialiser;
+	}
+
+	public void setButtonReinitialiser(Button buttonReinitialiser) {
+		this.buttonReinitialiser = buttonReinitialiser;
+	}
+
+	public Button getButtonQuitter() {
+		return buttonQuitter;
+	}
+
+	public void setButtonQuitter(Button buttonQuitter) {
+		this.buttonQuitter = buttonQuitter;
+	}
+
+	public Scene getScene() {
+		return scene;
+	}
+
+	public void setScene(Scene scene) {
+		this.scene = scene;
+	}
+
+	public BorderPane getRoot() {
+		return root;
+	}
+
+	public void setRoot(BorderPane root) {
+		this.root = root;
+	}
+
+	public HBox getHbBottom() {
+		return hbBottom;
+	}
+
+	public void setHbBottom(HBox hbBottom) {
+		this.hbBottom = hbBottom;
 	}
 
 	public ListView<TextFlow> getListFormes() {
@@ -419,6 +500,14 @@ public class VueForme {
 
 	public void setIo(Slider io) {
 		this.io = io;
+	}
+
+	public StackPane getPn() {
+		return pn;
+	}
+
+	public void setPn(StackPane pn) {
+		this.pn = pn;
 	}
 
 }

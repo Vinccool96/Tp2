@@ -3,27 +3,35 @@ package modele;
 import javafx.scene.paint.Color;
 
 public class DataFactory {
-	private String forme;
+	private String nom;
 	private Color couleur;
-	private boolean effet;
 	private double positionX;
 	private double positionY;
 	private double largeur;
 	private double hauteur;
 	private double coteC;
-	private double opacite;
 
-	public DataFactory(Forme forme, Couleur couleur, boolean effet, double positionX, double positionY, double largeur,
-			double hauteur, double coteC, double opacite) {
-		throw new UnsupportedOperationException();
+	public DataFactory(String nom, Color couleur, double positionX, double positionY, double largeur, double hauteur,
+			double coteC) {
+		setNom(nom);
+		setCouleur(couleur);
+		setPositionX(positionX);
+		setPositionY(positionY);
+		setLargeur(largeur);
+		setHauteur(hauteur);
+		if (nom.equals("Triangle")) {
+			setCoteC(coteC);
+		} else {
+			setCoteC(1);
+		}
 	}
 
-	public String getForme() {
-		return this.forme;
+	public String getNom() {
+		return this.nom;
 	}
 
-	public void setForme(String forme) {
-		this.forme = forme;
+	public void setNom(String forme) {
+		this.nom = forme;
 	}
 
 	public Color getCouleur() {
@@ -32,14 +40,6 @@ public class DataFactory {
 
 	public void setCouleur(Color couleur) {
 		this.couleur = couleur;
-	}
-
-	public boolean getEffet() {
-		return this.effet;
-	}
-
-	public void setEffet(boolean effet) {
-		this.effet = effet;
 	}
 
 	public double getPositionX() {
@@ -82,11 +82,4 @@ public class DataFactory {
 		this.coteC = coteC;
 	}
 
-	public double getOpacite() {
-		return this.opacite;
-	}
-
-	public void setOpacite(double opacite) {
-		this.opacite = opacite;
-	}
 }

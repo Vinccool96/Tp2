@@ -7,14 +7,14 @@ public class Ligne extends Forme {
 
 	private double endX;
 	private double endY;
-	private Line line;
 
 	public Ligne(double startX, double startY, double endX, double endY) throws FormeException {
 		super(startX, startY);
 		if (validerLine(startX, startY, endX, endY)) {
+			setNom("Ligne");
 			setEndX(endX);
 			setEndY(endY);
-			setLine();
+			setShape();
 		} else {
 			throw new FormeException();
 		}
@@ -36,12 +36,14 @@ public class Ligne extends Forme {
 		this.endY = getPositionY() + endY;
 	}
 
-	public Line getLine() {
-		return this.line;
+	@Override
+	public Line getShape() {
+		return (Line) this.shape;
 	}
 
-	public void setLine() {
-		this.line = new Line(this.getPositionX(), this.getPositionY(), this.getEndX(), this.getEndY());
+	@Override
+	public void setShape() {
+		this.shape = new Line(this.getPositionX(), this.getPositionY(), this.getEndX(), this.getEndY());
 	}
 
 	private boolean validerLine(double startX, double startY, double endX, double endY) {

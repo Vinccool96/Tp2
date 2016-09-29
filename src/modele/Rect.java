@@ -6,13 +6,15 @@ import exception.FormeException;
 public class Rect extends Forme {
 	private double hauteur = MIN_VAL;
 	private double largeur = MIN_VAL;
-	private Rectangle rect;
 
 	/**
 	 * @return @throws Exception
 	 */
 	public Rect(double largeur, double hauteur) throws FormeException {
 		if (validerLargeur(largeur) && validerHauteur(hauteur)) {
+			setNom("Rectangle");
+			setLargeur(largeur);
+			setHauteur(hauteur);
 		}
 	}
 
@@ -36,15 +38,19 @@ public class Rect extends Forme {
 		return ((MIN_VAL <= largeur) && (largeur <= MAX_VAL));
 	}
 
+	public Rectangle getShape() {
+		return getRect();
+	}
+
 	public Rectangle getRect() {
-		return this.rect;
+		return (Rectangle) this.shape;
 	}
 
-	public void setRect() {
-		throw new UnsupportedOperationException();
+	public void setShape() {
+		this.shape = new Rectangle(getLargeur(), getHauteur());
 	}
 
-	public void setHauteur(int hauteur) {
+	public void setHauteur(double hauteur) {
 		this.hauteur = hauteur;
 	}
 
@@ -52,7 +58,7 @@ public class Rect extends Forme {
 		return this.hauteur;
 	}
 
-	public void setLargeur(int largeur) {
+	public void setLargeur(double largeur) {
 		this.largeur = largeur;
 	}
 

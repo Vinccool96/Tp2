@@ -1,18 +1,44 @@
 package modele;
 
 import controleur.ControleurForme;
+import exception.FormeException;
+import javafx.scene.shape.Shape;
 
 public class FormesFactory {
 	public double _mIN_ZONE = 400;
 	public Object _mAX_ZONE = 500;
-	public Forme _unnamed_Forme_;
+	public Forme forme;
 	public ControleurForme _unnamed_ControleurForme_;
+	private Shape shape;
 
-	public FormesFactory(DataFactory aData) {
-		throw new UnsupportedOperationException();
+	public FormesFactory(DataFactory dF) {
+
 	}
 
-	public Forme getInstance(DataFactory aPDataFactory) {
-		throw new UnsupportedOperationException();
+	public Forme getInstance(DataFactory dF) {
+		Forme forme = null;
+		try {
+			if (dF.getNom().equals("Ovale")) {
+				forme = new Ovale(dF.getLargeur(), dF.getHauteur());
+			} else if (dF.getNom().equals("Rectangle")) {
+				forme = new Rect(dF.getLargeur(), dF.getHauteur());
+			} else if (dF.getNom().equals("Triangle")) {
+				forme = new Triangle(dF.getLargeur(), dF.getHauteur(), dF.getCoteC());
+			} else if (dF.getNom().equals("Ligne")) {
+				forme = new Ligne(dF.getPositionX(), dF.getPositionY(), dF.getLargeur(), dF.getHauteur());
+			}
+		} catch (FormeException e) {
+			e.printStackTrace();
+		}
+		return forme;
+
+	}
+
+	public Shape getShape() {
+		return shape;
+	}
+
+	public void setShape(Shape shape) {
+		this.shape = shape;
 	}
 }

@@ -7,10 +7,10 @@ public class Triangle extends Forme {
 	private double coteA = 0;
 	private double coteB = 0;
 	private double coteC = 0;
-	private Polygon triangle;
 
 	public Triangle(double a, double b, double c) throws FormeException {
 		if (estTriangle(a, b, c) && validerTriangle(a, b, c)) {
+			setNom("Triangle");
 			coteA = a;
 			coteB = b;
 			coteC = c;
@@ -76,12 +76,17 @@ public class Triangle extends Forme {
 		return coteC;
 	}
 
-	public Polygon getTriangle() {
-		return triangle;
+	public Polygon getShape() {
+		return (Polygon) shape;
 	}
 
-	public void setTriangle() {
-		this.triangle = new Polygon();
-		triangle.getPoints().addAll(new Double[] { 0.0, getCoteA(), 0.0, getCoteB(), 0.0, getCoteC() });
+	public void setShape() {
+		this.shape = new Polygon();
+		((Polygon) shape).getPoints().addAll(new Double[] { 0.0, 0.0, getCoteB(), 0.0, 0.0, getCoteC() });
 	}
+
+	private double angleA() {
+		return Math.acos((coteB * coteB + coteC * coteC - coteA * coteA) / (2.0 * coteB * coteC));
+	}
+
 }

@@ -32,6 +32,7 @@ public class ControleurForme extends Application {
 		@Override
 		public void handle(WindowEvent event) {
 			if (!started) {
+				vf.getButtonGenerer().setDisable(true);
 				vf.getTheChosenOne().setDisable(true);
 				vf.getChkBxEffet().setDisable(true);
 				vf.getTxtFldPositionX().setDisable(true);

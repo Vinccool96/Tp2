@@ -7,7 +7,6 @@ public class Ovale extends Forme {
 
 	private double largeur = MIN_VAL;
 	private double hauteur = MIN_VAL;
-	private Ellipse ellipse;
 
 	/**
 	 * méthode construisant un objet de type Cercle avec un rayon valide, tout
@@ -16,8 +15,9 @@ public class Ovale extends Forme {
 	public Ovale(double largeur, double hauteur) throws FormeException {
 		boolean ok = validerEllipse(largeur, hauteur);
 		if (ok) {
+			setNom("Ovale");
 			setDimensions(largeur, hauteur);
-			setEllipse();
+			setShape();
 		} else {
 			throw new FormeException();
 		}
@@ -44,14 +44,14 @@ public class Ovale extends Forme {
 		setHauteur(hauteur);
 	}
 
-	public Ellipse getEllipse() {
-		return ellipse;
+	public Ellipse getShape() {
+		return (Ellipse) shape;
 	}
 
-	public void setEllipse() {
-		this.ellipse = new Ellipse(largeur, hauteur);
-		this.ellipse.setCenterX(getLargeur() / 2);
-		this.ellipse.setCenterY(getHauteur() / 2);
+	public void setShape() {
+		this.shape = new Ellipse(largeur, hauteur);
+		((Ellipse) this.shape).setCenterX(getLargeur() / 2);
+		((Ellipse) this.shape).setCenterY(getHauteur() / 2);
 	}
 
 	/**

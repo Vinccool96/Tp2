@@ -1,6 +1,7 @@
 package modele;
 
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Shape;
 
 /**
  * @author 1537391
@@ -13,9 +14,23 @@ public abstract class Forme {
 	private double positionX = 0;
 	private double positionY = 0;
 	private Color couleur = COULEUR_DEFAUT;
+	protected Shape shape;
+	protected String nom;
+
+	public String getNom() {
+		return nom;
+	}
+
+	public void setNom(String nom) {
+		this.nom = nom;
+	}
 
 	public Forme() {
 
+	}
+
+	public void setShape(Shape shape) {
+		this.shape = shape;
 	}
 
 	public Forme(double positionX, double positionY) {
@@ -55,4 +70,9 @@ public abstract class Forme {
 			this.couleur = couleur;
 		}
 	}
+
+	protected abstract Shape getShape();
+
+	protected abstract void setShape();
+
 }
