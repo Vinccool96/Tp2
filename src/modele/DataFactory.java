@@ -3,24 +3,24 @@ package modele;
 import javafx.scene.paint.Color;
 
 public class DataFactory {
-	private String nom;
-	private Color couleur;
-	private double positionX;
-	private double positionY;
-	private double largeur;
-	private double hauteur;
-	private double coteC;
+	private String nom = null;
+	private Color couleur = null;
+	private double positionX = 0;
+	private double positionY = 0;
+	private double largeur = 0;
+	private double hauteur = 0;
+	private double coteC = 0;
 
 	public DataFactory(String nom, Color couleur, double positionX, double positionY, double largeur, double hauteur,
 			double coteC) {
 		setNom(nom);
 		setCouleur(couleur);
-		setPositionX(positionX);
-		setPositionY(positionY);
-		setLargeur(largeur);
-		setHauteur(hauteur);
+		setPositionX(Math.abs(positionX));
+		setPositionY(Math.abs(positionY));
+		setLargeur(Math.abs(largeur));
+		setHauteur(Math.abs(hauteur));
 		if (nom.equals("Triangle")) {
-			setCoteC(coteC);
+			setCoteC(Math.abs(coteC));
 		} else {
 			setCoteC(1);
 		}

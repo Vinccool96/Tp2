@@ -15,6 +15,7 @@ public class Rect extends Forme {
 			setNom("Rectangle");
 			setLargeur(largeur);
 			setHauteur(hauteur);
+			setShape();
 		}
 	}
 

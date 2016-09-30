@@ -1,7 +1,6 @@
 package code_formes;
 
 import javafx.application.Platform;
-import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,16 +20,15 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import modele.DataFactory;
-import modele.Forme;
 import modele.FormesFactory;
 
 public class VueForme {
@@ -47,7 +45,7 @@ public class VueForme {
 	private Scene scene;
 	private BorderPane root;
 	private HBox hbBottom;
-	private StackPane pn;
+	private Pane pn;
 	private ListView<TextFlow> listFormes;
 	private ColorPicker theChosenOne;
 	private CheckBox chkBxEffet;
@@ -70,18 +68,13 @@ public class VueForme {
 
 	}
 
-	public StackPane addCenter() {
-		pn = new StackPane();
+	public Pane addCenter() {
+		pn = new Pane();
 
 		pn.setPrefSize(500, 500);
 		pn.getStyleClass().add("pn");
-		Circle c = new Circle(100);
 
-		c.centerXProperty().bind(pn.widthProperty().divide(2));
-		c.centerYProperty().bind(pn.heightProperty().divide(2));
-		c.setFill(Paint.valueOf("RED"));
 		pn.getStyleClass().add("stack_pane");
-		pn.getChildren().add(c);
 
 		return pn;
 	}
@@ -280,6 +273,17 @@ public class VueForme {
 
 	}
 
+	private void appliquerEffet(boolean isEffet) {
+		for (Node node : getPn().getChildren()) {
+			if (isEffet) {
+				((Shape) node).setStroke(Paint.valueOf("#7F00FF"));
+				((Shape) node).setStrokeWidth(1);
+			} else {
+				((Shape) node).setStrokeWidth(0);
+			}
+		}
+	}
+
 	private void construireInterface() {
 		root = new BorderPane();
 		root.setRight(addRight());
@@ -299,13 +303,18 @@ public class VueForme {
 			// FIXME Auto-generated method stub
 			if (event.getSource() == buttonQuitter) {
 				Platform.exit();
+
 			} else if (event.getSource() == buttonReinitialiser) {
 				getPn().getChildren().removeAll(getPn().getChildren());
+
 			} else if (event.getSource() == buttonGenerer) {
+
 				for (Node node : getPn().getChildren()) {
 					node.opacityProperty().bind(Bindings.divide(io.valueProperty(), io.maxProperty()));
 				}
+
 				DataFactory dF;
+
 				if (!txtFldCoteC.isDisabled()) {
 					dF = new DataFactory(name, getTheChosenOne().getValue(),
 							Double.parseDouble(txtFldPositionX.getText()),
@@ -319,9 +328,23 @@ public class VueForme {
 				}
 
 				FormesFactory fF = new FormesFactory(dF);
-				Forme f = fF.getInstance(dF);
+				Shape newShape = fF.getShape();
+				getPn().getChildren().add(newShape);
+
+				if (!dF.getNom().equals("Ligne")) {
+					newShape.setTranslateX(dF.getPositionX() + 5);
+					newShape.setTranslateY(dF.getPositionY() + 5);
+					if (dF.getNom().equals("Ovale")) {
+						newShape.setTranslateX(dF.getPositionX() + 5 + (((Ellipse) newShape).getRadiusX() / 2));
+						newShape.setTranslateY(dF.getPositionY() + 5 + (((Ellipse) newShape).getRadiusY() / 2));
+					}
+				}
+
+				newShape.opacityProperty().bind(Bindings.divide(io.valueProperty(), io.maxProperty()));
+				appliquerEffet(chkBxEffet.isSelected());
 
 			}
+
 		}
 	}
 
@@ -331,21 +354,9 @@ public class VueForme {
 		public void handle(ActionEvent event) {
 			if (event.getSource() == chkBxEffet) {
 				boolean isEffet = chkBxEffet.isSelected();
-				setEffet(isEffet);
+				appliquerEffet(isEffet);
 			}
 
-		}
-
-		private void setEffet(boolean isEffet) {
-
-			for (Node node : getPn().getChildren()) {
-				if (isEffet) {
-					((Shape) node).setStroke(Paint.valueOf("#7F00FF"));
-					((Shape) node).setStrokeWidth(10);
-				} else {
-					((Shape) node).setStrokeWidth(0);
-				}
-			}
 		}
 
 	}
@@ -404,7 +415,7 @@ public class VueForme {
 				txtFldCoteA.setDisable(false);
 				txtFldCoteB.setDisable(false);
 				txtFldCoteC.setDisable(true);
-				System.out.println("Ligne");
+				name = "ligne";
 			}
 
 		}
@@ -502,11 +513,11 @@ public class VueForme {
 		this.io = io;
 	}
 
-	public StackPane getPn() {
+	public Pane getPn() {
 		return pn;
 	}
 
-	public void setPn(StackPane pn) {
+	public void setPn(Pane pn) {
 		this.pn = pn;
 	}
 

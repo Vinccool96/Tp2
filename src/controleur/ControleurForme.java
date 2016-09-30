@@ -41,6 +41,7 @@ public class ControleurForme extends Application {
 				vf.getTxtFldCoteB().setDisable(true);
 				vf.getTxtFldCoteC().setDisable(true);
 				vf.getIo().setDisable(true);
+				vf.getIo().setValue(vf.getIo().getMax());
 			}
 		}
 	}

@@ -12,6 +12,14 @@ public class FormesFactory {
 	private Shape shape;
 
 	public FormesFactory(DataFactory dF) {
+		this.forme = getInstance(dF);
+		this.shape = this.forme.getShape();
+		this.shape.setFill(dF.getCouleur());
+
+		if (!dF.getNom().equals("Ligne")) {
+			this.shape.setTranslateX(dF.getPositionX());
+			this.shape.setTranslateY(dF.getPositionY());
+		}
 
 	}
 

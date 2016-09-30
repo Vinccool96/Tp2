@@ -1,6 +1,7 @@
 package modele;
 
 import exception.FormeException;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.Polygon;
 
 public class Triangle extends Forme {
@@ -8,12 +9,17 @@ public class Triangle extends Forme {
 	private double coteB = 0;
 	private double coteC = 0;
 
+	private Point2D pointA;
+	private Point2D pointB;
+	private Point2D pointC;
+
 	public Triangle(double a, double b, double c) throws FormeException {
 		if (estTriangle(a, b, c) && validerTriangle(a, b, c)) {
 			setNom("Triangle");
 			coteA = a;
 			coteB = b;
 			coteC = c;
+			setShape();
 		} else {
 			throw new FormeException();
 		}
@@ -82,11 +88,42 @@ public class Triangle extends Forme {
 
 	public void setShape() {
 		this.shape = new Polygon();
-		((Polygon) shape).getPoints().addAll(new Double[] { 0.0, 0.0, getCoteB(), 0.0, 0.0, getCoteC() });
+		setPointA();
+		setPointB();
+		setPointC();
+		((Polygon) shape).getPoints().addAll(getPointA().getX(), getPointA().getY());
+		((Polygon) shape).getPoints().addAll(getPointB().getX(), getPointB().getY());
+		((Polygon) shape).getPoints().addAll(getPointC().getX(), getPointC().getY());
 	}
 
-	private double angleA() {
-		return Math.acos((coteB * coteB + coteC * coteC - coteA * coteA) / (2.0 * coteB * coteC));
+	public Point2D getPointA() {
+		return pointA;
 	}
 
+	public void setPointA() {
+		this.pointA = new Point2D(0, 0);
+	}
+
+	public Point2D getPointB() {
+		return pointB;
+	}
+
+	public void setPointB() {
+		this.pointB = new Point2D(getCoteA(), 0);
+	}
+
+	public Point2D getPointC() {
+		return pointC;
+	}
+
+	public double area() {
+		double p = (getCoteA() + getCoteB() + getCoteC()) / 2;
+		return Math.sqrt(p * (p - getCoteA()) * (p - getCoteB()) * (p - getCoteC()));
+	}
+
+	public void setPointC() {
+		double xC = (getCoteC() * getCoteC() - getCoteB() * getCoteB() + getCoteA() * getCoteA()) / (2 * getCoteA());
+		double yC = Math.sqrt(getCoteC() * getCoteC() - xC * xC);
+		this.pointC = new Point2D(xC, yC);
+	}
 }
